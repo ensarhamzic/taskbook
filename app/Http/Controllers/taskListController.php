@@ -17,5 +17,7 @@ class taskListController extends Controller
             'user_id' => $user,
             'name' => $validated['name']
         ]);
+
+        return $validated['name'];
     }
 }

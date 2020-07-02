@@ -2,7 +2,11 @@
 
 @section('head')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
+<style>
+    .lists a {
+        color: black;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -35,7 +39,7 @@
                         data-target="#myModal"></i>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body lists" id="listsDiv">
                     @foreach ($user->lists->pluck("name") as $list)
                     <a href="javascript:void(0)" class="m-0">{{ $list }}</a><br>
                     @endforeach
@@ -65,8 +69,12 @@
             url:'/list/add',
             data:{_token: "{{ csrf_token() }}", name: taskListName
             },
-            success: function( tasks ) {
-                    console.log(tasks);
+            success: function( listName ) {
+                console.log(listName);
+                $( "input[name='taskListName']" ).val("");
+                newList = $("<a href='javascript:void(0)'></a><br>");
+                newList.html(listName);
+                $("#listsDiv").append(newList);
             }
         });
     }
