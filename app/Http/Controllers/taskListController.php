@@ -13,11 +13,20 @@ class taskListController extends Controller
             'name' => "string|required|max:25",
         ]);
         $user = auth()->user()->id;
-        TaskList::create([
+        $newTaskList = TaskList::create([
             'user_id' => $user,
             'name' => $validated['name']
         ]);
 
-        return $validated['name'];
+        $newTaskListId = $newTaskList['id'];
+
+        return [$validated['name'], $newTaskListId];
+    }
+
+    public function show(Request $request) {
+        $id = $request->listId;
+        if(auth()->user()->lists->pluck('id')->contains($id)){
+            return "a";
+        }
     }
 }

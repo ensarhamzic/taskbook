@@ -40,20 +40,20 @@
                 </div>
 
                 <div class="card-body lists" id="listsDiv">
-                    @foreach ($user->lists->pluck("name") as $list)
-                    <a href="javascript:void(0)" class="m-0">{{ $list }}</a><br>
+                    @foreach ($user->lists as $list)
+                    <a href="javascript:showList({{ $list['id'] }})" >{{ $list['name'] }}</a><br>
                     @endforeach
                 </div>
             </div>
         </div>
         <div class="col-md-9">
             <div class="card">
-                <div class="card-header">Your notes
+                <div class="card-header text-center">Select a list
 
                 </div>
 
                 <div class="card-body">
-
+                        <h3 class="text-center my-5">No list selected :(</h3>
                 </div>
             </div>
         </div>
@@ -70,11 +70,26 @@
             data:{_token: "{{ csrf_token() }}", name: taskListName
             },
             success: function( listName ) {
-                console.log(listName);
                 $( "input[name='taskListName']" ).val("");
-                newList = $("<a href='javascript:void(0)'></a><br>");
-                newList.html(listName);
+                newList = $("<a></a>");
+                newList.attr('href', 'javascript:showList('+listName[1]+')');
+                br = $("<br>");
+                newList.append(br);
+                newList.html(listName[0]);
                 $("#listsDiv").append(newList);
+            }
+        });
+    }
+
+    function showList(taskListId) {
+        id = taskListId;
+        $.ajax({
+            type:'POST',
+            url:'/list/show',
+            data:{_token: "{{ csrf_token() }}", listId: id
+            },
+            success: function( listContent ) {
+                console.log(listContent);
             }
         });
     }
