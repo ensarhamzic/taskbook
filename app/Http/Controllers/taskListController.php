@@ -29,4 +29,12 @@ class taskListController extends Controller
             return "a";
         }
     }
+
+    public function delete(Request $request) {
+        $id = $request->deleteId;
+        if(auth()->user()->lists->pluck('id')->contains($id)) {
+            TaskList::find($id)->delete();
+            return $id;
+        }
+    }
 }

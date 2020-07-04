@@ -11,23 +11,7 @@
 
 @section('content')
 <div class="container">
-    <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add New Task List</h4>
-                </div>
-                <div class="modal-body">
-                    <label for="taskListName">Task List Name</label>
-                    <input type="text" class="form-control" name="taskListName" id="taskListName">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="addList()" data-dismiss="modal">Add</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
 
     <div class="row">
@@ -41,7 +25,7 @@
 
                 <div class="card-body lists" id="listsDiv">
                     @foreach ($user->lists as $list)
-                    <a href="javascript:showList({{ $list['id'] }})" >{{ $list['name'] }}</a><br>
+                    <a id="list{{ $list['id'] }}" class="d-block" href="javascript:showList({{ $list['id'] }})" oncontextmenu="javascript:deleteModal({{ $list['id'] }})" >{{ $list['name'] }}</a>
                     @endforeach
                 </div>
             </div>
@@ -55,6 +39,56 @@
                 <div class="card-body">
                         <h3 class="text-center my-5">No list selected :(</h3>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Task List</h4>
+            </div>
+            <div class="modal-body">
+                <label for="taskListName">Task List Name</label>
+                <input type="text" class="form-control" name="taskListName" id="taskListName">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addList()" data-dismiss="modal">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Do you really want to delete this Task List?</h4>
+                <input type="hidden" class="form-control" name="taskListNameDel" id="taskListNameDel">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="deleteList()" data-dismiss="modal">Delete</button>
             </div>
         </div>
     </div>
@@ -73,8 +107,9 @@
                 $( "input[name='taskListName']" ).val("");
                 newList = $("<a></a>");
                 newList.attr('href', 'javascript:showList('+listName[1]+')');
-                br = $("<br>");
-                newList.append(br);
+                newList.attr('oncontextmenu', 'javascript:deleteModal('+listName[1]+')');
+                newList.attr("id", "list"+listName[1]);
+                newList.addClass("d-block");
                 newList.html(listName[0]);
                 $("#listsDiv").append(newList);
             }
@@ -90,6 +125,25 @@
             },
             success: function( listContent ) {
                 console.log(listContent);
+            }
+        });
+    }
+
+    function deleteModal(id){
+        $("#deleteModal").modal();
+        $("#taskListNameDel").val(id);
+        window.event.returnValue = false;
+    }
+
+    function deleteList() {
+        taskListNameDel = $("#taskListNameDel").val();
+        $.ajax({
+            type:'POST',
+            url:'/list/delete',
+            data:{_token: "{{ csrf_token() }}", deleteId: taskListNameDel
+            },
+            success: function( listId ) {
+                $("#list"+listId).remove();
             }
         });
     }

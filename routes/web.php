@@ -22,3 +22,4 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/list/add', 'taskListController@store');
 Route::post('/list/show', 'taskListController@show');
+Route::post('/list/delete', 'taskListController@delete');
