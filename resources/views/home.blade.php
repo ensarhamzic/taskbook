@@ -11,7 +11,7 @@
 
 @section('content')
 <div class="container">
-    
+
 
 
     <div class="row">
@@ -25,19 +25,20 @@
 
                 <div class="card-body lists" id="listsDiv">
                     @foreach ($user->lists as $list)
-                    <a id="list{{ $list['id'] }}" class="d-block" href="javascript:showList({{ $list['id'] }})" oncontextmenu="javascript:deleteModal({{ $list['id'] }})" >{{ $list['name'] }}</a>
+                    <a id="list{{ $list['id'] }}" class="d-block" href="javascript:showList({{ $list['id'] }})"
+                        oncontextmenu="javascript:deleteModal({{ $list['id'] }})">{{ $list['name'] }}</a>
                     @endforeach
                 </div>
             </div>
         </div>
         <div class="col-md-9">
             <div class="card">
-                <div class="card-header text-center">Select a list
-
+                <div id="listHeaderDiv" class="card-header text-center">
+                    Select a list
                 </div>
 
-                <div class="card-body">
-                        <h3 class="text-center my-5">No list selected :(</h3>
+                <div id="listBodyDiv" class="card-body">
+                    <h3 class="text-center my-5">No list selected :&#40;</h3>
                 </div>
             </div>
         </div>
@@ -118,13 +119,26 @@
 
     function showList(taskListId) {
         id = taskListId;
+        listName = $("#list"+id).html();
         $.ajax({
             type:'POST',
             url:'/list/show',
             data:{_token: "{{ csrf_token() }}", listId: id
             },
             success: function( listContent ) {
-                console.log(listContent);
+                $("#listHeaderDiv").html(listName);
+                if(listContent.length != 0) {
+                    $("#listBodyDiv").html("");
+                    for(i=0;i<listContent.length;i++) {
+                        oneTask = $("<a href='#' class='d-block'></a>")
+                        oneTask.html(listContent[i]['name']);
+                        $("#listBodyDiv").append(oneTask);
+                    }
+                }
+                else {
+                    $("#listBodyDiv").html("");
+                    $("#listBodyDiv").append("<h3 class='text-center my-5'>No tasks :&#40;</h3>");
+                }
             }
         });
     }

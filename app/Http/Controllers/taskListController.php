@@ -26,7 +26,8 @@ class taskListController extends Controller
     public function show(Request $request) {
         $id = $request->listId;
         if(auth()->user()->lists->pluck('id')->contains($id)){
-            return "a";
+            $list = TaskList::find($id);
+            return $list->tasks;
         }
     }
 
