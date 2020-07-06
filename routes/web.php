@@ -25,3 +25,4 @@ Route::post('/list/show', 'taskListController@show');
 Route::post('/list/delete', 'taskListController@delete');
 
 Route::post('/task/add', 'taskController@store');
+Route::post('/task/delete', 'taskController@delete');

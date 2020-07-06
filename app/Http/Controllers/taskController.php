@@ -19,4 +19,13 @@ class taskController extends Controller
             return [$task->id, $task->name];
         }
     }
+
+    public function delete(Request $request) {
+        $id = $request->deleteId;
+        $task = Task::find($id);
+        $list = $task->list->id;
+        if(auth()->user()->lists->pluck('id')->contains($list)) {
+            $task->delete();
+        }
+    }
 }

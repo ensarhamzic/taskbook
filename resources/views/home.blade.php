@@ -168,7 +168,8 @@
                 if(listContent.length != 0) {
                     $("#listBodyDiv").html("");
                     for(i=0;i<listContent.length;i++) {
-                        oneTask = $("<a href='#' oncontextmenu=javascript:deleteTaskModal("+listContent[i]['id']+") class='d-block'></a>")
+                        oneTask = $("<a href='#' oncontextmenu=javascript:deleteTaskModal("+listContent[i]['id']+") class='d-block'></a>");
+                        oneTask.attr("id", "task"+listContent[i]['id']);
                         oneTask.html(listContent[i]['name']);
                         $("#listBodyDiv").append(oneTask);
                     }
@@ -202,7 +203,6 @@
     }
 
     function addTaskModal(id){
-        console.log(broj);
         $("#addTaskModal").modal();
         $("#listHidden").val(id);
     }
@@ -219,6 +219,7 @@
                 $("#addTask").val("");
                 a = $("<a href='#' class='d-block'></a>");
                 a.html(data[1]);
+                a.attr("id", "task"+data[0]);
                 a.attr('oncontextmenu', 'javascript:deleteTaskModal('+data[0]+')');
 
 
@@ -245,10 +246,10 @@
         $.ajax({
             type:'POST',
             url:'/task/delete',
-            data:{_token: "{{ csrf_token() }}", deleteId: taskListNameDel
+            data:{_token: "{{ csrf_token() }}", deleteId: taskNameDel
             },
-            success: function( listId ) {
-                $("#list"+listId).remove();
+            success: function( data ) {
+                $("#task"+taskNameDel).remove();
             }
         });
     }
